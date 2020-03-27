@@ -14,15 +14,17 @@ exports.genCode = (tableName, modelName)=> {
         for (let filed of fileds) {
             genInfo.properties.push({
                 name: line2Hump(filed.NAME),
-                javaType: jdbcToJavaType(filed.jdbcType),
+                javaType: jdbc2JavaType(filed.jdbcType),
                 colName: filed.NAME,
                 jdbcType: filed.jdbcType,
-                note: filed.comments})
+                note: filed.comments,
+                require: filed.comments
+            })
         }
 
-       return  genPO(genInfo);
-       /* genController(genInfo);
-        genPOMapper(genInfo);
+       //genPO(genInfo);
+        console.log(genController(genInfo));
+       /* genPOMapper(genInfo);
         genPOMapperXml(genInfo);
         genPOService(genInfo);
         genVO(genInfo);*/
@@ -76,40 +78,67 @@ import java.util.List;
 @SyncApiToDb("")
 @RestController
 @RequestMapping("")
+@Api(tags = "")
 public class ${genInfo.modelName}Controller {
 
     @Autowired
     private ${genInfo.modelName}POService ${genInfo.modelVarName}POService;
 
-    @SyncApiToDb("")
+    @ApiOperation("新增")
+    @ApiImplicitParams({
+            ${tplSwaggerParams(genInfo.properties)}
+    })
+    @SyncApiToDb("新增")
     @RequestMapping(path = "/add", method = RequestMethod.POST)
     public JsonResult add(@Validated ${genInfo.modelName}PO ${genInfo.modelVarName}PO){
         int res = ${genInfo.modelVarName}POService.baseSave(${genInfo.modelVarName}PO);
         return JsonResult.of(res > 0, "添加成功", "添加失败");
     }
 
-    @SyncApiToDb("")
+    @ApiOperation("修改")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "唯一标识", dataType = "string", paramType = "form", required = true),
+            ${tplSwaggerParams(genInfo.properties)}
+    })
+    @SyncApiToDb("修改")
     @RequestMapping(path = "/update", method = RequestMethod.POST)
     public JsonResult update(@Validated ${genInfo.modelName}PO ${genInfo.modelVarName}PO){
         int res = ${genInfo.modelVarName}POService.baseUpdate(${genInfo.modelVarName}PO);
         return JsonResult.of(res > 0, "更新成功", "更新失败");
     }
 
-    @SyncApiToDb("")
+    @ApiOperation("删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "项目id", dataType = "string", paramType = "form", required = true)})
+    @SyncApiToDb("删除")
     @RequestMapping(path = "/delete", method = RequestMethod.POST)
     public JsonResult deleteById(@NotNull(message = "id不能为空") String id){
         int res = ${genInfo.modelVarName}POService.baseDeleteById(id);
         return JsonResult.of(res > 0, "删除成功", "删除失败");
     }
 
-    @SyncApiToDb("")
+    @ApiOperation("批量删除")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "ids", value = "项目id", dataType = "string", paramType = "form", required = true)})
+    @SyncApiToDb("批量删除")
     @RequestMapping(path = "/deleteBatch", method = RequestMethod.POST)
     public JsonResult deleteByIds(@NotNull(message = "ids不能为空") String ids){
         int res = ${genInfo.modelVarName}POService.baseDeleteByIds(ids);
         return  JsonResult.of(res > 0, "删除成功", "删除失败");
     }
 
-    @SyncApiToDb("")
+    @ApiImplicitParam(name = "page", value = "页码", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "pageSize", value = "页面大小", dataType = "string", paramType = "query", required = true),
+            @ApiImplicitParam(name = "orderBy", value = "排序", dataType = "string", paramType = "query", required = false),
+            ${tplSwaggerParams(genInfo.properties)}
+            })
+    @ApiReturnArray(
+            description = "项目列表",
+            properties = {
+                    @ApiReturnDataProperty(id = "0", name = "item", description = "项目信息", dataType = ArdDataTypeEnum.OBJECT),
+                    ${tplSwaggerReturn(genInfo.properties)}
+                    })
+    @SyncApiToDb("列表")
     @RequestMapping(path = "/page", method = RequestMethod.GET)
     public JsonResult page(@NotNull(message = "页码不能为空")Integer page, @NotNull(message = "页面大小不能为空") Integer pageSize, ${genInfo.modelName}PO params){
         PageHelper.startPage(page, pageSize);
@@ -119,6 +148,25 @@ public class ${genInfo.modelName}Controller {
 
 }`;
     // console.log(tpl);
+    return tpl;
+}
+
+function tplSwaggerParams(properties) {
+    let tpl = '';
+    for (let property of properties) {
+        tpl += `@ApiImplicitParam(name = "${property.name}", value = "${property.note}", dataType = "${javaType2SwaggerParamsType(property.javaType)}", paramType = "form", required = ${property.require}),
+        `
+    }
+    return tpl;
+}
+
+function tplSwaggerReturn() {
+    let tpl = '';
+    let index = 1;
+    for (let property of properties) {
+        tpl += `@ApiReturnDataProperty(id = ${index++}, name = ${property.name}, description = ${property.note}, dataType = ArdDataTypeEnum.${javaType2SwaggerReturnType(property.javaType)}, parentId = "0"),
+        `
+    }
     return tpl;
 }
 
@@ -449,7 +497,7 @@ function line2Hump(name) {
     });
 }
 
-function jdbcToJavaType(jdbcType) {
+function jdbc2JavaType(jdbcType) {
     if (startsWithIgnoreCase(jdbcType, "CHAR")
         || startsWithIgnoreCase(jdbcType, "VARCHAR")
         || startsWithIgnoreCase(jdbcType, "NARCHAR")
@@ -469,6 +517,20 @@ function jdbcToJavaType(jdbcType) {
             || startsWithIgnoreCase(jdbcType, "DECIMAL")) {
         return "BigDecimal";
     }
+}
+
+function javaType2SwaggerParamsType(javaType) {
+    if (javaType === 'Integer' || javaType === 'BigDecimal') {
+        return 'int'
+    }
+     return 'string';
+}
+
+function javaType2SwaggerReturnType(javaType) {
+    if (javaType === 'Integer' || javaType === 'BigDecimal') {
+        return 'NUMBER'
+    }
+    return 'STRING';
 }
 
 function startsWithIgnoreCase(str1, str2) {
