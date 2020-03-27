@@ -1,6 +1,14 @@
-const tableinfo = require('./tableinfo');
+const contentDisposition = require('content-disposition');
 
-exports.genCode = (tableName, modelName)=> {
+const tableinfo = require('./tableinfo');
+const fileutil = require('./fileutil');
+
+
+
+exports.genCode = (req, res)=> {
+    const tableName = req.query.tableName;
+    const modelName = req.query.modelName;
+    const genType = req.query.genType;
     tableinfo.getTableColInfo(tableName, fileds => {
         const genInfo = {
             tableName: '',
@@ -18,16 +26,43 @@ exports.genCode = (tableName, modelName)=> {
                 colName: filed.NAME,
                 jdbcType: filed.jdbcType,
                 note: filed.comments,
-                require: filed.comments
+                require: filed.isNull === '1'
             })
         }
 
-       //genPO(genInfo);
-        console.log(genController(genInfo));
-       /* genPOMapper(genInfo);
-        genPOMapperXml(genInfo);
-        genPOService(genInfo);
-        genVO(genInfo);*/
+       switch (genType) {
+           case 'c': {
+               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}Controller.java`));
+               res.end(fileutil.str2buff(genController(genInfo)));
+           } break;
+
+           case 's': {
+               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POService.java`));
+               res.end(fileutil.str2buff(genPOService(genInfo)));
+           } break;
+
+           case 'p': {
+               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}PO.java`));
+               res.end(fileutil.str2buff(genPO(genInfo)));
+           } break;
+
+           case 'v': {
+               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}VO.java`));
+               res.end(fileutil.str2buff(genVO(genInfo)));
+           } break;
+
+           case 'm': {
+               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POMapper.java`));
+               res.end(fileutil.str2buff(genPOMapper(genInfo)));
+           } break;
+
+           case 'x': {
+               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POMapper.xml`));
+               res.end(fileutil.str2buff(genPOMapperXml(genInfo)));
+           } break;
+
+       }
+
     })
 };
 
@@ -160,7 +195,7 @@ function tplSwaggerParams(properties) {
     return tpl;
 }
 
-function tplSwaggerReturn() {
+function tplSwaggerReturn(properties) {
     let tpl = '';
     let index = 1;
     for (let property of properties) {
@@ -538,6 +573,7 @@ function startsWithIgnoreCase(str1, str2) {
     str2 = str2.toUpperCase();
     return str1.indexOf(str2) === 0;
 }
+
 
 /*function get() {
     genCode('t_achilles_improve_apply','AchillesImproveApply');

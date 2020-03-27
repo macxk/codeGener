@@ -1,14 +1,7 @@
-var mysql = require('mysql');
-var conn = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'crrc_atalanta',
-    port: 3306
-});
-
+const dbutil = require('./dbutil');
 // 表名及注释
 exports.getTableName = (callback) => {
+    const conn = dbutil.createConn();
     const tableNameSql = `SELECT t.table_name AS name,t.TABLE_COMMENT AS comments 
                         \t\t\tFROM information_schema.\`TABLES\` t 
                         \t\t\tWHERE t.TABLE_SCHEMA = (select database())
@@ -25,6 +18,7 @@ exports.getTableName = (callback) => {
 
 // 表列信息
 exports.getTableColInfo = (tableName, callback) => {
+    const conn = dbutil.createConn();
     let tableColInfoSql = `SELECT
                         \tt.COLUMN_NAME AS NAME,
                         \t( CASE WHEN t.IS_NULLABLE = 'YES' THEN '1' ELSE '0' END ) AS isNull,
