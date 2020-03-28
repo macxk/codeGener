@@ -5,7 +5,7 @@ exports.createConn = () => {
         host: 'localhost',
         user: 'root',
         password: '123456',
-        database: 'crrc_atalanta',
+        database: 'mysql',
         port: 3306
     });
 };

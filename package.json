@@ -1,5 +1,5 @@
 {
-  "name": "untitled",
+  "name": "codeGener",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,7 +12,6 @@
     "fetch": "^1.1.0",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "mustache": "^4.0.1",
     "mysql": "^2.18.1",
     "pug": "2.0.0-beta11"
   },
