@@ -2,11 +2,11 @@ extends layout
 
 block content
   - var d = data
-  div
-    table
-      tr
-        td 表名
-        td 注释
+  div.container
+    table.table.table-striped.table-bordered
+      thead
+        th 表名
+        th 注释
       each val in d
         tr
           td= val.name
