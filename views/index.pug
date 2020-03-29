@@ -3,6 +3,10 @@ extends layout
 block content
   - var d = data
   div
+    form(action='/index', method='get', role='form')
+      .form-group
+        input(name='tableName')
+      button(type='submit').btn 提交
     table
       tr
         td 表名

@@ -1,6 +1,6 @@
 const contentDisposition = require('content-disposition');
 
-const tableinfo = require('./tableinfo');
+const tableinfo = require('./sql');
 const fileutil = require('./fileutil');
 const tpl = require('./template');
 
