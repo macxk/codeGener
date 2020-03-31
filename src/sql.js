@@ -34,6 +34,7 @@ exports.getTableColInfo = (tableName, callback) => {
                         \tinformation_schema.\`COLUMNS\` t 
                         WHERE
                         \tt.TABLE_SCHEMA = ( SELECT DATABASE ( ) ) 
+                        and t.TABLE_NAME ='${tableName}'
                         ORDER BY
                         \tt.ORDINAL_POSITION`;
     conn.connect();
