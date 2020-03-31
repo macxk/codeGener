@@ -27,7 +27,7 @@ exports.genCode = (req, res)=> {
                 colName: filed.NAME,
                 jdbcType: filed.jdbcType,
                 note: filed.comments,
-                require: filed.isNull === '1'
+                require: filed.isNull === '0'
             })
         }
 
