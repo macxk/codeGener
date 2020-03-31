@@ -2,12 +2,21 @@ extends layout
 
 block content
   - var d = data
-  div.container
-    table.table.table-striped.table-bordered
-      thead
-        th 表名
-        th 注释
-      each val in d
-        tr
-          td= val.name
-          td= val.comments
+  .container
+    form(action='/index', method='get', role='form').form
+      .row
+        .col-md-4.col-md-offset-7
+          input(name='tableName', style='width:200px').form-control
+        .col-md-1
+          button(type='submit').btn.btn-info 提交
+    div(style='height:500px;overflow: auto')
+      table.table
+        thead
+          th 表名
+          th 注释
+          th 操作
+        each val in d
+          tr
+            td= val.name
+            td= val.comments
+            td <button type='butoon' class='btn btn-success'> 生成 </button>

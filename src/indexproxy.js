@@ -1,8 +1,7 @@
-const tableinfo = require('./tableinfo');
+const tableinfo = require('./sql');
 
 exports.renderIndex = (req, res) => {
-    tableinfo.getTablesInfo((data) =>{
-       //  console.log(data);
+    tableinfo.getTablesInfo(req.query.tableName,(data) =>{
         res.render('index', {data: data});
     });
 };

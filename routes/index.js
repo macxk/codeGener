@@ -3,8 +3,7 @@ var router = express.Router();
 
 const indexproxy = require('../src/indexproxy');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/index', function(req, res, next) {
   indexproxy.renderIndex(req, res);
   // res.render('index', { content: 'this is content!'})
 });

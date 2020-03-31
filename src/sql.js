@@ -1,13 +1,16 @@
 const dbutil = require('./dbutil');
 // 表名及注释
-exports.getTablesInfo = (callback) => {
+exports.getTablesInfo = (tableName, callback) => {
     const conn = dbutil.createConn();
-    const tableNameSql = `SELECT t.table_name AS name,t.TABLE_COMMENT AS comments 
+    let tableNameSql = `SELECT t.table_name AS name,t.TABLE_COMMENT AS comments 
                         \t\t\tFROM information_schema.\`TABLES\` t 
                         \t\t\tWHERE t.TABLE_SCHEMA = (select database())
                         \t\t\tAND t.TABLE_NAME not like 'act_%'
-                        \t\t\tAND t.TABLE_NAME not like 'qrtz_%'
-                        \t\t\tORDER BY t.TABLE_NAME`;
+                        \t\t\tAND t.TABLE_NAME not like 'qrtz_%'`;
+      if (tableName) {
+          tableNameSql += `\t\t\tAND t.TABLE_NAME like '%${tableName}%'`;
+      }
+    tableNameSql += `\t\t\tORDER BY t.TABLE_NAME`;
     conn.connect();
     conn.query(tableNameSql,(err,results) => {
         if (err) {
