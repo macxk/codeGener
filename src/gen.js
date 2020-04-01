@@ -5,8 +5,7 @@ const fileutil = require('./fileutil');
 const tpl = require('./template');
 
 
-
-exports.genCode = (req, res)=> {
+exports.genCode = (req, res) => {
     const tableName = req.query.tableName;
     const modelName = req.query.modelName;
     const genType = req.query.genType;
@@ -31,38 +30,44 @@ exports.genCode = (req, res)=> {
             })
         }
 
-       switch (genType) {
-           case 'c': {
-               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}Controller.java`));
-               res.end(fileutil.str2buff(tpl.genController(genInfo)));
-           } break;
+        switch (genType) {
+            case 'c': {
+                res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}Controller.java`));
+                res.end(fileutil.str2buff(tpl.genController(genInfo)));
+            }
+                break;
 
-           case 's': {
-               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POService.java`));
-               res.end(fileutil.str2buff(tpl.genPOService(genInfo)));
-           } break;
+            case 's': {
+                res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POService.java`));
+                res.end(fileutil.str2buff(tpl.genPOService(genInfo)));
+            }
+                break;
 
-           case 'p': {
-               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}PO.java`));
-               res.end(fileutil.str2buff(tpl.genPO(genInfo)));
-           } break;
+            case 'p': {
+                res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}PO.java`));
+                res.end(fileutil.str2buff(tpl.genPO(genInfo)));
+            }
+                break;
 
-           case 'v': {
-               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}VO.java`));
-               res.end(fileutil.str2buff(tpl.genVO(genInfo)));
-           } break;
+            case 'v': {
+                res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}VO.java`));
+                res.end(fileutil.str2buff(tpl.genVO(genInfo)));
+            }
+                break;
 
-           case 'm': {
-               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POMapper.java`));
-               res.end(fileutil.str2buff(tpl.genPOMapper(genInfo)));
-           } break;
+            case 'm': {
+                res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POMapper.java`));
+                res.end(fileutil.str2buff(tpl.genPOMapper(genInfo)));
+            }
+                break;
 
-           case 'x': {
-               res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POMapper.xml`));
-               res.end(fileutil.str2buff(tpl.genPOMapperXml(genInfo)));
-           } break;
+            case 'x': {
+                res.set('Content-Disposition', contentDisposition(`${genInfo.modelName}POMapper.xml`));
+                res.end(fileutil.str2buff(tpl.genPOMapperXml(genInfo)));
+            }
+                break;
 
-       }
+        }
 
     })
 };
@@ -73,18 +78,18 @@ function jdbc2JavaType(jdbcType) {
         || startsWithIgnoreCase(jdbcType, "VARCHAR")
         || startsWithIgnoreCase(jdbcType, "NARCHAR")
         || startsWithIgnoreCase(jdbcType, "TEXT")
-    ){
+    ) {
         return "String";
-    }else if (startsWithIgnoreCase(jdbcType, "DATETIME")
+    } else if (startsWithIgnoreCase(jdbcType, "DATETIME")
         || startsWithIgnoreCase(jdbcType, "DATE")
-        || startsWithIgnoreCase(jdbcType, "TIMESTAMP")){
+        || startsWithIgnoreCase(jdbcType, "TIMESTAMP")) {
         // return  "java.util.Date";
         return "String"
-    }else if (startsWithIgnoreCase(jdbcType, "BIGINT")
+    } else if (startsWithIgnoreCase(jdbcType, "BIGINT")
         || startsWithIgnoreCase(jdbcType, "INT")
-        || startsWithIgnoreCase(jdbcType, "TINYINT")){
+        || startsWithIgnoreCase(jdbcType, "TINYINT")) {
         return "Integer";
-    }else if (startsWithIgnoreCase(jdbcType, "NUMBER")
+    } else if (startsWithIgnoreCase(jdbcType, "NUMBER")
         || startsWithIgnoreCase(jdbcType, "DECIMAL")
         || startsWithIgnoreCase(jdbcType, "DOUBLE")) {
         return "BigDecimal";
@@ -103,12 +108,12 @@ function getModelVarName(modelName) {
 
 function getModelName(tableName) {
     let str = line2Hump(tableName.toLowerCase());
-    return  str.charAt(0).toUpperCase() + str.slice(1);
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // 下划线转驼峰
 function line2Hump(name) {
-    return name.replace(/_(\w)/g, function(all, letter){
+    return name.replace(/_(\w)/g, function (all, letter) {
         return letter.toUpperCase();
     });
 }

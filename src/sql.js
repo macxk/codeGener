@@ -7,14 +7,14 @@ exports.getTablesInfo = (tableName, callback) => {
                         \t\t\tWHERE t.TABLE_SCHEMA = (select database())
                         \t\t\tAND t.TABLE_NAME not like 'act_%'
                         \t\t\tAND t.TABLE_NAME not like 'qrtz_%'`;
-      if (tableName) {
-          tableNameSql += `\t\t\tAND t.TABLE_NAME like '%${tableName}%'`;
-      }
+    if (tableName) {
+        tableNameSql += `\t\t\tAND t.TABLE_NAME like '%${tableName}%'`;
+    }
     tableNameSql += `\t\t\tORDER BY t.TABLE_NAME`;
     conn.connect();
-    conn.query(tableNameSql,(err,results) => {
+    conn.query(tableNameSql, (err, results) => {
         if (err) {
-           throw err;
+            throw err;
         }
         callback(results);
     });
@@ -38,7 +38,7 @@ exports.getTableColInfo = (tableName, callback) => {
                         ORDER BY
                         \tt.ORDINAL_POSITION`;
     conn.connect();
-    conn.query(tableColInfoSql,(err,fileds) => {
+    conn.query(tableColInfoSql, (err, fileds) => {
         if (err) {
             throw err;
         }

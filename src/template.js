@@ -1,6 +1,6 @@
 module.exports = {
-     genPO(genInfo) {
-    const tpl = `import com.sunvua.coeus.ext.common.po.BaseVersionControlPO;
+    genPO(genInfo) {
+        const tpl = `import com.sunvua.coeus.ext.common.po.BaseVersionControlPO;
 import com.sunvua.coeus.ext.common.po.DbTableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -13,27 +13,27 @@ public class ${genInfo.modelName}PO extends BaseVersionControlPO {
 ${this.tplPOProperty(genInfo.properties)}
 }`;
 
-    //console.log(tpl);
-    return tpl;
-},
+        //console.log(tpl);
+        return tpl;
+    },
 
-tplPOProperty(properties) {
-    let propertiesTpl = '';
-    for (let p of properties) {
-        // 过滤系统字段
-        if (this.notSystemProperty(p)) {
-            propertiesTpl+= `/**
+    tplPOProperty(properties) {
+        let propertiesTpl = '';
+        for (let p of properties) {
+            // 过滤系统字段
+            if (this.notSystemProperty(p)) {
+                propertiesTpl += `/**
                          * ${p.note}
                          */
                         private ${p.javaType} ${p.name};
                         `
+            }
         }
-    }
-    return propertiesTpl;
-},
+        return propertiesTpl;
+    },
 
-genController(genInfo) {
-    const tpl = `import com.github.pagehelper.Page;
+    genController(genInfo) {
+        const tpl = `import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -124,48 +124,48 @@ public class ${genInfo.modelName}Controller {
     }
 
 }`;
-    // console.log(tpl);
-    return tpl;
-},
+        // console.log(tpl);
+        return tpl;
+    },
 
-tplSwaggerParams(properties) {
-    let tpl = '';
-    for (let property of properties) {
-        if (this.notSystemProperty(property)) {
-            tpl += `@ApiImplicitParam(name = "${property.name}", value = "${property.note}", dataType = "${this.javaType2SwaggerParamsType(property.javaType)}", paramType = "form", required = ${property.require}),
+    tplSwaggerParams(properties) {
+        let tpl = '';
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                tpl += `@ApiImplicitParam(name = "${property.name}", value = "${property.note}", dataType = "${this.javaType2SwaggerParamsType(property.javaType)}", paramType = "form", required = ${property.require}),
     `
+            }
         }
-    }
 
-    return tpl;
-},
+        return tpl;
+    },
 
- tplSwaggerReturn(properties) {
-    let tpl = '';
-    let index = 1;
-     for (let property of properties) {
-         if (this.notSystemProperty(property)) {
-             tpl += `@ApiReturnDataProperty(id = "${index++}", name = "${property.name}", description = "${property.note}", dataType = ArdDataTypeEnum.${this.javaType2SwaggerReturnType(property.javaType)}, parentId = "0"),
+    tplSwaggerReturn(properties) {
+        let tpl = '';
+        let index = 1;
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                tpl += `@ApiReturnDataProperty(id = "${index++}", name = "${property.name}", description = "${property.note}", dataType = ArdDataTypeEnum.${this.javaType2SwaggerReturnType(property.javaType)}, parentId = "0"),
     `
-         }
-     }
-    return tpl;
-},
+            }
+        }
+        return tpl;
+    },
 
-genPOMapper(genInfo) {
-    const tpl = `import org.apache.ibatis.annotations.Mapper;
+    genPOMapper(genInfo) {
+        const tpl = `import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Component;
 
 @Mapper
 @Component
 public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.modelName}PO> {
 }`;
-    // console.log(tpl);
-    return tpl;
-},
+        // console.log(tpl);
+        return tpl;
+    },
 
-genPOMapperXml(genInfo) {
-    const tpl = `<?xml version="1.0" encoding="UTF-8" ?>
+    genPOMapperXml(genInfo) {
+        const tpl = `<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="${genInfo.modelName}POMapper">
 
@@ -280,7 +280,7 @@ genPOMapperXml(genInfo) {
 
     <!-- 校验唯一性 -->
     <select id="checkUnique" resultType="int">
-        SELECT count(0) FROM ${genInfo.tableName} where`+' ${column_name}' +`= #{column_value}
+        SELECT count(0) FROM ${genInfo.tableName} where` + ' ${column_name}' + `= #{column_value}
     </select>
 
     <!-- 校验唯一性 -->
@@ -288,7 +288,7 @@ genPOMapperXml(genInfo) {
         SELECT count(0) FROM ${genInfo.tableName}
         <where>
             <foreach collection="map.entrySet()" item="value" open=""  close="" index="key">
-                AND ` +'${key}'+ ` = #{value}
+                AND ` + '${key}' + ` = #{value}
             </foreach>
         </where>
     </select>
@@ -298,7 +298,7 @@ genPOMapperXml(genInfo) {
         SELECT count(0) FROM ${genInfo.tableName}
         <where>
             <foreach collection="map.entrySet()" item="value" open=""  close="" index="key">
-                AND ` +'${key}'+ ` = #{value}
+                AND ` + '${key}' + ` = #{value}
             </foreach>
             <if test="id != null and id != ''">
                 AND id = #{id}
@@ -308,111 +308,111 @@ genPOMapperXml(genInfo) {
 
 </mapper>`;
 
-    return tpl;
-},
+        return tpl;
+    },
 
 
-tplBaseColumn(properties) {
-    let tpl = '';
-    for (let property of properties) {
-        tpl += `${property.colName} as ${property.name},`
-    }
-    return  tpl.slice(0,tpl.length-1);
-},
-
-tplSaveColumns(properties) {
-    let tpl = ',';
-    for (let property of properties) {
-        if (this.notSystemCol(property)) {
-            tpl += ` ${property.colName},`
+    tplBaseColumn(properties) {
+        let tpl = '';
+        for (let property of properties) {
+            tpl += `${property.colName} as ${property.name},`
         }
-    }
-    return  tpl.slice(0,tpl.length-1);
-},
+        return tpl.slice(0, tpl.length - 1);
+    },
 
-tplSaveValues(properties) {
-    let tpl = ',';
-    for (let property of properties) {
-        if (this.notSystemProperty(property)) {
-            tpl += ` #{${property.name}},`
+    tplSaveColumns(properties) {
+        let tpl = ',';
+        for (let property of properties) {
+            if (this.notSystemCol(property)) {
+                tpl += ` ${property.colName},`
+            }
         }
-    }
-    return  tpl.slice(0,tpl.length-1);
-},
+        return tpl.slice(0, tpl.length - 1);
+    },
 
-tplSaveBatchValues(properties) {
-    let tpl = ',';
-    for (let property of properties) {
-        if (this.notSystemProperty(property)) {
-            tpl += ` #{item.${property.name}},`
+    tplSaveValues(properties) {
+        let tpl = ',';
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                tpl += ` #{${property.name}},`
+            }
         }
-    }
-    return  tpl.slice(0,tpl.length-1);
-},
+        return tpl.slice(0, tpl.length - 1);
+    },
 
-tplUpdateItems(properties) {
-    let tpl = '';
-    for (let property of properties) {
-        if (this.notSystemProperty(property)) {
-            if (property.javaType === `String`) {
-                tpl += `<if test="${property.name} != null and ${property.name} != ''">
+    tplSaveBatchValues(properties) {
+        let tpl = ',';
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                tpl += ` #{item.${property.name}},`
+            }
+        }
+        return tpl.slice(0, tpl.length - 1);
+    },
+
+    tplUpdateItems(properties) {
+        let tpl = '';
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                if (property.javaType === `String`) {
+                    tpl += `<if test="${property.name} != null and ${property.name} != ''">
                  ${property.colName} = #{${property.name}},
                 </if>
                 `;
-            } else {
-                tpl += `<if test="${property.name} != null">
+                } else {
+                    tpl += `<if test="${property.name} != null">
                 ${property.colName} = #{${property.name}},
                 </if>
                 `;
+                }
+
             }
-
         }
-    }
-    return tpl;
-},
+        return tpl;
+    },
 
-tplFindParamsItems(properties) {
-    let tpl = '';
-    for (let property of properties) {
-        if (this.notSystemProperty(property)) {
-            if (property.javaType === `String`) {
-                tpl += `<if test="${property.name} != null and ${property.name} != ''">
+    tplFindParamsItems(properties) {
+        let tpl = '';
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                if (property.javaType === `String`) {
+                    tpl += `<if test="${property.name} != null and ${property.name} != ''">
                     AND ${property.colName} = #{${property.name}}
                 </if>
                 `;
-            } else {
-                tpl += `<if test="${property.name} != null">
+                } else {
+                    tpl += `<if test="${property.name} != null">
                     AND ${property.colName} = #{${property.name}}
                 </if>
                 `;
+                }
             }
         }
-    }
-    return tpl;
-},
+        return tpl;
+    },
 
-tplFuzzyFindaramsItems(properties) {
-    let tpl = '';
-    for (let property of properties) {
-        if (this.notSystemProperty(property)) {
-            if (property.javaType === `String`) {
-                tpl += `<if test="${property.name} != null and ${property.name} != ''">
-                    AND ${property.colName} like CONCAT('%','`+'${'+property.name +`}','%')
+    tplFuzzyFindaramsItems(properties) {
+        let tpl = '';
+        for (let property of properties) {
+            if (this.notSystemProperty(property)) {
+                if (property.javaType === `String`) {
+                    tpl += `<if test="${property.name} != null and ${property.name} != ''">
+                    AND ${property.colName} like CONCAT('%','` + '${' + property.name + `}','%')
                 </if>
                 `;
-            } else {
-                tpl += `<if test="${property.name} != null">
+                } else {
+                    tpl += `<if test="${property.name} != null">
                     AND ${property.colName} = #{${property.name}}
                 </if>
                 `;
+                }
             }
         }
-    }
-    return tpl;
-},
+        return tpl;
+    },
 
- genPOService(genInfo) {
-    return `import org.springframework.beans.factory.annotation.Autowired;
+    genPOService(genInfo) {
+        return `import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -453,10 +453,10 @@ public class ${genInfo.modelName}POService implements BasePOService<${genInfo.mo
     }
 
 }`;
-},
+    },
 
-genVO(genInfo) {
-    return `import lombok.Data;
+    genVO(genInfo) {
+        return `import lombok.Data;
 import java.io.Serializable;
 
 @Data
@@ -486,30 +486,30 @@ public class ${genInfo.modelName}VO implements Serializable {
     ${this.tplPOProperty(genInfo.properties)}
 
 }`;
-},
+    },
 
 
-javaType2SwaggerParamsType(javaType) {
-    if (javaType === 'Integer' || javaType === 'BigDecimal') {
-        return 'int'
+    javaType2SwaggerParamsType(javaType) {
+        if (javaType === 'Integer' || javaType === 'BigDecimal') {
+            return 'int'
+        }
+        return 'string';
+    },
+
+    javaType2SwaggerReturnType(javaType) {
+        if (javaType === 'Integer' || javaType === 'BigDecimal') {
+            return 'NUMBER'
+        }
+        return 'STRING';
+    },
+
+    notSystemProperty(property) {
+        return ['id', 'createTime', 'createBy', 'updateTime', 'updateBy', 'remarks', 'sort', 'dataTag', 'validStartTime', 'validEndTime', 'version', 'dataState'].indexOf(property.name) === -1;
+    },
+
+    notSystemCol(property) {
+        return ['id', 'create_time', 'create_by', 'update_time', 'update_by', 'remarks', 'sort', 'data_tag', 'valid_start_time', 'valid_end_time', 'version', 'data_state'].indexOf(property.colName) === -1;
     }
-    return 'string';
-},
-
-javaType2SwaggerReturnType(javaType) {
-    if (javaType === 'Integer' || javaType === 'BigDecimal') {
-        return 'NUMBER'
-    }
-    return 'STRING';
-},
-
-notSystemProperty(property) {
-    return ['id', 'createTime', 'createBy', 'updateTime', 'updateBy', 'remarks', 'sort', 'dataTag', 'validStartTime', 'validEndTime', 'version', 'dataState'].indexOf(property.name) === -1;
-},
-
-notSystemCol(property) {
-    return ['id', 'create_time', 'create_by', 'update_time', 'update_by', 'remarks', 'sort', 'data_tag', 'valid_start_time', 'valid_end_time', 'version', 'data_state'].indexOf(property.colName) === -1;
-}
 
 };
 
