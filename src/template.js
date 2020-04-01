@@ -94,6 +94,8 @@ public class ${genInfo.modelName}Controller {
         int res = ${genInfo.modelVarName}POService.baseDeleteByIds(ids);
         return  JsonResult.of(res > 0, "删除成功", "删除失败");
     }
+    
+    @ApiOperation("列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "page", value = "页码", dataType = "string", paramType = "query", required = true),
             @ApiImplicitParam(name = "pageSize", value = "页面大小", dataType = "string", paramType = "query", required = true),
