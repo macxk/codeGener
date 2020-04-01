@@ -21,7 +21,7 @@ tplPOProperty(properties) {
     let propertiesTpl = '';
     for (let p of properties) {
         // 过滤系统字段
-        if (notSystemProperty(p)) {
+        if (this.notSystemProperty(p)) {
             propertiesTpl+= `/**
                          * ${p.note}
                          */
@@ -129,7 +129,7 @@ public class ${genInfo.modelName}Controller {
 tplSwaggerParams(properties) {
     let tpl = '';
     for (let property of properties) {
-        if (notSystemProperty(property)) {
+        if (this.notSystemProperty(property)) {
             tpl += `@ApiImplicitParam(name = "${property.name}", value = "${property.note}", dataType = "${this.javaType2SwaggerParamsType(property.javaType)}", paramType = "form", required = ${property.require}),
     `
         }
@@ -142,7 +142,7 @@ tplSwaggerParams(properties) {
     let tpl = '';
     let index = 1;
      for (let property of properties) {
-         if (notSystemProperty(property)) {
+         if (this.notSystemProperty(property)) {
              tpl += `@ApiReturnDataProperty(id = "${index++}", name = "${property.name}", description = "${property.note}", dataType = ArdDataTypeEnum.${this.javaType2SwaggerReturnType(property.javaType)}, parentId = "0"),
     `
          }
@@ -321,7 +321,7 @@ tplBaseColumn(properties) {
 tplSaveColumns(properties) {
     let tpl = ',';
     for (let property of properties) {
-        if (notSystemCol(property)) {
+        if (this.notSystemCol(property)) {
             tpl += ` ${property.colName},`
         }
     }
@@ -331,7 +331,7 @@ tplSaveColumns(properties) {
 tplSaveValues(properties) {
     let tpl = ',';
     for (let property of properties) {
-        if (notSystemProperty(property)) {
+        if (this.notSystemProperty(property)) {
             tpl += ` #{${property.name}},`
         }
     }
@@ -341,7 +341,7 @@ tplSaveValues(properties) {
 tplSaveBatchValues(properties) {
     let tpl = ',';
     for (let property of properties) {
-        if (notSystemProperty(property)) {
+        if (this.notSystemProperty(property)) {
             tpl += ` #{item.${property.name}},`
         }
     }
@@ -351,7 +351,7 @@ tplSaveBatchValues(properties) {
 tplUpdateItems(properties) {
     let tpl = '';
     for (let property of properties) {
-        if (notSystemProperty(property)) {
+        if (this.notSystemProperty(property)) {
             if (property.javaType === `String`) {
                 tpl += `<if test="${property.name} != null and ${property.name} != ''">
                  ${property.colName} = #{${property.name}},
@@ -372,7 +372,7 @@ tplUpdateItems(properties) {
 tplFindParamsItems(properties) {
     let tpl = '';
     for (let property of properties) {
-        if (notSystemProperty(property)) {
+        if (this.notSystemProperty(property)) {
             if (property.javaType === `String`) {
                 tpl += `<if test="${property.name} != null and ${property.name} != ''">
                     AND ${property.colName} = #{${property.name}}
@@ -392,7 +392,7 @@ tplFindParamsItems(properties) {
 tplFuzzyFindaramsItems(properties) {
     let tpl = '';
     for (let property of properties) {
-        if (notSystemProperty(property)) {
+        if (this.notSystemProperty(property)) {
             if (property.javaType === `String`) {
                 tpl += `<if test="${property.name} != null and ${property.name} != ''">
                     AND ${property.colName} like CONCAT('%','`+'${'+property.name +`}','%')
@@ -438,7 +438,7 @@ public class ${genInfo.modelName}POService implements BasePOService<${genInfo.mo
             String uuid = UUID.randomUUID().toString();
             ${genInfo.modelVarName}PO.setId(uuid);
             ${genInfo.modelVarName}PO.setDataTag(uuid);
-            ${genInfo.modelVarName}POsetVersion(1);
+            ${genInfo.modelVarName}PO.setVersion(1);
             ${genInfo.modelVarName}PO.setValidStartTime(DateUtils.formatDate(LocalDateTime.now(),"yyyy-MM-dd HH:mm:ss"));
             ${genInfo.modelVarName}PO.setValidEndTime("2099-12-31 23:59:59");
             ${genInfo.modelVarName}PO.setDataState(0);

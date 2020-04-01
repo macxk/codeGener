@@ -85,7 +85,8 @@ function jdbc2JavaType(jdbcType) {
         || startsWithIgnoreCase(jdbcType, "TINYINT")){
         return "Integer";
     }else if (startsWithIgnoreCase(jdbcType, "NUMBER")
-        || startsWithIgnoreCase(jdbcType, "DECIMAL")) {
+        || startsWithIgnoreCase(jdbcType, "DECIMAL")
+        || startsWithIgnoreCase(jdbcType, "DOUBLE")) {
         return "BigDecimal";
     }
 }
