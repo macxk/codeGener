@@ -231,7 +231,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     <select id="baseFindById" resultType="${genInfo.modelName}PO">
         SELECT 
         <include refid="baseColumns"/>
-        FROM ${genInfo.tableName}
+        FROM ${genInfo.tableName} t1
         WHERE id = #{id}
     </select>
 
@@ -239,7 +239,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     <select id="baseFindListByIds" resultType="${genInfo.modelName}PO">
         SELECT 
         <include refid="baseColumns"/>
-        FROM ${genInfo.tableName}
+        FROM ${genInfo.tableName} t1
         WHERE id IN
         <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
             #{item}
@@ -249,7 +249,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     <!-- 条件查询列表 -->
     <select id="baseFindListByParams" resultType="${genInfo.modelName}PO">
         SELECT 
-        <include refid="baseColumns"/>
+        <include refid="baseColumns"/> t1
         FROM ${genInfo.tableName}
         <where>
             1 = 1
@@ -261,7 +261,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     <!-- 条件模糊查询列表 -->
     <select id="baseFuzzyFindListByParams" resultType="${genInfo.modelName}PO">
         SELECT 
-        <include refid="baseColumns"/>
+        <include refid="baseColumns"/> t1
         FROM ${genInfo.tableName}
         <where>
             1 = 1
@@ -274,7 +274,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     <select id="baseFindAll" resultType="${genInfo.modelName}PO">
         SELECT
         <include refid="baseColumns"/> 
-        FROM ${genInfo.tableName}
+        FROM ${genInfo.tableName} t1
         ORDER BY sort ASC , create_time DESC
     </select>
 
@@ -315,7 +315,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     tplBaseColumn(properties) {
         let tpl = '';
         for (let property of properties) {
-            tpl += `${property.colName} as ${property.name},`
+            tpl += `t1.${property.colName} as ${property.name},`
         }
         return tpl.slice(0, tpl.length - 1);
     },
