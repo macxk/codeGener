@@ -232,7 +232,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
         SELECT 
         <include refid="baseColumns"/>
         FROM ${genInfo.tableName} t1
-        WHERE id = #{id}
+        WHERE t1.id = #{id}
     </select>
 
     <!-- 根据id查询多个 -->
@@ -240,7 +240,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
         SELECT 
         <include refid="baseColumns"/>
         FROM ${genInfo.tableName} t1
-        WHERE id IN
+        WHERE t1.id IN
         <foreach collection="ids" index="index" item="item" open="(" close=")" separator=",">
             #{item}
         </foreach>
@@ -249,25 +249,25 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     <!-- 条件查询列表 -->
     <select id="baseFindListByParams" resultType="${genInfo.modelName}PO">
         SELECT 
-        <include refid="baseColumns"/> t1
-        FROM ${genInfo.tableName}
+        <include refid="baseColumns"/>
+        FROM ${genInfo.tableName} t1
         <where>
             1 = 1
             ${this.tplFindParamsItems(genInfo.properties)}
         </where>
-        ORDER BY sort ASC , create_time DESC
+        ORDER BY t1.sort ASC , t1.create_time DESC
     </select>
 
     <!-- 条件模糊查询列表 -->
     <select id="baseFuzzyFindListByParams" resultType="${genInfo.modelName}PO">
         SELECT 
-        <include refid="baseColumns"/> t1
-        FROM ${genInfo.tableName}
+        <include refid="baseColumns"/>
+        FROM ${genInfo.tableName} t1
         <where>
             1 = 1
         ${this.tplFuzzyFindaramsItems(genInfo.properties)}
         </where>
-        ORDER BY sort ASC , create_time DESC
+        ORDER BY t1.sort ASC , t1.create_time DESC
     </select>
 
     <!-- 查询所有 -->
@@ -275,7 +275,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
         SELECT
         <include refid="baseColumns"/> 
         FROM ${genInfo.tableName} t1
-        ORDER BY sort ASC , create_time DESC
+        ORDER BY t1.sort ASC , t1.create_time DESC
     </select>
 
     <!-- 校验唯一性 -->
@@ -323,9 +323,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     tplSaveColumns(properties) {
         let tpl = ',';
         for (let property of properties) {
-            if (this.notSystemCol(property)) {
-                tpl += ` ${property.colName},`
-            }
+            tpl += ` ${property.colName},`
         }
         return tpl.slice(0, tpl.length - 1);
     },
@@ -333,9 +331,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     tplSaveValues(properties) {
         let tpl = ',';
         for (let property of properties) {
-            if (this.notSystemProperty(property)) {
-                tpl += ` #{${property.name}},`
-            }
+            tpl += ` #{${property.name}},`
         }
         return tpl.slice(0, tpl.length - 1);
     },
@@ -343,9 +339,7 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     tplSaveBatchValues(properties) {
         let tpl = ',';
         for (let property of properties) {
-            if (this.notSystemProperty(property)) {
-                tpl += ` #{item.${property.name}},`
-            }
+            tpl += ` #{item.${property.name}},`
         }
         return tpl.slice(0, tpl.length - 1);
     },
@@ -353,19 +347,16 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
     tplUpdateItems(properties) {
         let tpl = '';
         for (let property of properties) {
-            if (this.notSystemProperty(property)) {
-                if (property.javaType === `String`) {
-                    tpl += `<if test="${property.name} != null and ${property.name} != ''">
+            if (property.javaType === `String`) {
+                tpl += `<if test="${property.name} != null and ${property.name} != ''">
                  ${property.colName} = #{${property.name}},
                 </if>
                 `;
-                } else {
-                    tpl += `<if test="${property.name} != null">
+            } else {
+                tpl += `<if test="${property.name} != null">
                 ${property.colName} = #{${property.name}},
                 </if>
                 `;
-                }
-
             }
         }
         return tpl;
@@ -377,12 +368,12 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
             if (this.notSystemProperty(property)) {
                 if (property.javaType === `String`) {
                     tpl += `<if test="${property.name} != null and ${property.name} != ''">
-                    AND ${property.colName} = #{${property.name}}
+                    AND t1.${property.colName} = #{${property.name}}
                 </if>
                 `;
                 } else {
                     tpl += `<if test="${property.name} != null">
-                    AND ${property.colName} = #{${property.name}}
+                    AND t1.${property.colName} = #{${property.name}}
                 </if>
                 `;
                 }
@@ -397,12 +388,12 @@ public interface ${genInfo.modelName}POMapper extends BasePOMapper<${genInfo.mod
             if (this.notSystemProperty(property)) {
                 if (property.javaType === `String`) {
                     tpl += `<if test="${property.name} != null and ${property.name} != ''">
-                    AND ${property.colName} like CONCAT('%','` + '${' + property.name + `}','%')
+                    AND t1.${property.colName} like CONCAT('%','` + '${' + property.name + `}','%')
                 </if>
                 `;
                 } else {
                     tpl += `<if test="${property.name} != null">
-                    AND ${property.colName} = #{${property.name}}
+                    AND t1.${property.colName} = #{${property.name}}
                 </if>
                 `;
                 }
