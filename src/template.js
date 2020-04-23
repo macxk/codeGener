@@ -726,7 +726,6 @@ public class ${genInfo.modelName}VO implements Serializable {
                 }
             },
             mounted() {
-                this.loadSystemList();
                 this.load()
             },
             methods: {
@@ -790,7 +789,7 @@ public class ${genInfo.modelName}VO implements Serializable {
                 handleReset() {
                     this.searchParams = {
                         // 添加查询条件
-                        orderBy: 't1.create_time desc'
+                        orderBy: 't1.createTime desc'
                     }
                     this.load()
                 },
@@ -941,9 +940,6 @@ public class ${genInfo.modelName}VO implements Serializable {
                     }
                 },
         
-                handlePlatChange(){
-    
-                },
                 /**
                  * 关闭事件
                  */
@@ -1010,13 +1006,13 @@ public class ${genInfo.modelName}VO implements Serializable {
         for (let p of properties) {
             // 过滤系统字段
             if (this.notSystemProperty(p)) {
-                propertiesTpl += ` {
+                propertiesTpl += ` 
                     <div class="form-item-wrap">
                         <FormItem label="${p.note}" prop="${p.name}">
                             
                         </FormItem>
                     </div>
-                }, `;
+                , `;
             }
         }
         return propertiesTpl;
